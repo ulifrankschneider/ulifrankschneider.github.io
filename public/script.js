@@ -21,3 +21,8 @@ document.getElementById('generate-email').addEventListener('click', async () => 
                 alert('An unexpected error occurred.');
             }
         });
+        document.getElementById('send-email').addEventListener('click', () => {
+            const emailContent = document.getElementById('generated-email').value;
+            const mailtoLink = `mailto:?subject=Generated Email&body=${encodeURIComponent(emailContent)}`;
+            window.location.href = mailtoLink;
+        });
