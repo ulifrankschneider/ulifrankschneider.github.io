@@ -20,7 +20,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // API-Endpunkt zum Generieren von E-Mails basierend auf dem Thema
 app.post('/generate-email', async (req, res) => {
-    const { topic } = req.body;
+    const { topic, securityCode } = req.body;
 
     // Sicherheitscode überprüfen
     const expectedCode = "X!911"; // Der erwartete Sicherheitscode
