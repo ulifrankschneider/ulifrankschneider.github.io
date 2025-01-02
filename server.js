@@ -14,6 +14,13 @@ const PORT = process.env.PORT || 3000; // Default to 3000 if no PORT is provided
 console.log(`Message from USC`); //to delete
 
 
+//the following is to test the routing
+/*app.get('/', (req, res) => {
+    console.log('GET / called');
+    res.send('Server is working!');
+});*/ 
+
+
 // Endpoint to generate an email based on the topic
 app.post('/generate-email', async (req, res) => {
     console.log('POST /generate-email called'); // Log für den Routenaufruf
