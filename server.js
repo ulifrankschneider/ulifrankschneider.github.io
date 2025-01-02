@@ -3,12 +3,11 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const axios = require('axios');
 const path = require('path'); // Ermöglicht den Zugriff auf den Dateipfad
-
-const app = express();
-app.use(bodyParser.json());
-
 const cors = require('cors');
-    app.use(cors());  // Add this line to allow cross-origin requests
+const app = express();
+
+app.use(bodyParser.json());
+app.use(cors());  // Add this line to allow cross-origin requests
 
 
 // Zugriff auf den OpenAI-API-Schlüssel aus den Umgebungsvariablen
