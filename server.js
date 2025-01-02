@@ -2,8 +2,17 @@ require('dotenv').config(); // Load environment variables from .env file
 const express = require('express');
 const bodyParser = require('body-parser');
 const axios = require('axios');
-
 const app = express();
+
+
+app.use((req, res, next) => {
+    console.log(`Request received: ${req.method} ${req.url}`);
+    console.log('Headers:', req.headers);
+    console.log('Body:', req.body); // Dies gibt den Körper der POST-Anfrage aus
+    next(); // Weiter zur nächsten Middleware oder Route
+});
+
+
 app.use(bodyParser.json());
 
 // Accessing the OpenAI API key from environment variables

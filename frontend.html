@@ -27,6 +27,9 @@
     <script>
         document.getElementById('generate-email').addEventListener('click', async () => {
             const topic = document.getElementById('email-topic').value;
+            
+            //use next line if ran locally, the one after, if ran on render
+            //const response = await fetch('http://localhost:3000/generate-email', {
             const response = await fetch('https://ulifrankschneider-github-io.onrender.com/generate-email', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
