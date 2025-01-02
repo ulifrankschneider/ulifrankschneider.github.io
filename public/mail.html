@@ -13,11 +13,31 @@
         </ul>
     </nav>
     <h1>Email Generator</h1>
+
+    <!-- Eingabefeld für den Adressaten -->
+    <label for="recipient">Recipient (To):</label><br>
+    <input type="text" id="recipient" placeholder="Enter recipient's email..." style="width: 100%; margin: 10px 0;"><br>
+
+    <!-- Eingabefeld für den Absender -->
+    <label for="sender">Sender (From):</label><br>
+    <input type="text" id="sender" placeholder="Enter sender's email..." style="width: 100%; margin: 10px 0;"><br>
+
+    <!-- Dropdown für die Sprache -->
+    <label for="language">Select Language:</label><br>
+    <select id="language" style="width: 100%; margin: 10px 0;">
+        <option value="en">English</option>
+        <option value="de">Deutsch</option>
+    </select><br>
+
+    <!-- Eingabefeld für das Thema -->
     <label for="email-topic">What is the email about?</label><br>
     <input type="text" id="email-topic" placeholder="Enter topic here..." style="width: 100%; margin: 10px 0;"><br>
+
     <!-- Eingabefeld für den Sicherheitscode -->
     <label for="security-code">Enter Security Code:</label><br>
-    <input type="password" id="security-code" placeholder="Enter security code..."><br>
+    <input type="password" id="security-code" placeholder="Enter security code..." style="width: 100%; margin: 10px 0;"><br>
+
+    <!-- Buttons -->
     <button id="generate-email">Generate Email</button>
     <h2>Generated Email:</h2>
     <textarea id="generated-email" readonly></textarea><br>
