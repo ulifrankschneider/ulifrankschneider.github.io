@@ -7,8 +7,7 @@ const cors = require('cors');
 const app = express();
 
 app.use(bodyParser.json());
-app.use(cors());  // Add this line to allow cross-origin requests
-
+app.use(cors()); // Allow cross-origin requests
 
 // Zugriff auf den OpenAI-API-Schlüssel aus den Umgebungsvariablen
 const openaiApiKey = process.env.OPENAI_API_KEY;
@@ -42,7 +41,8 @@ app.post('/generate-email', async (req, res) => {
             }
         });
 
-        const email = response.data.choices[0].messages.trim();
+        // Correct extraction of the generated email
+        const email = response.data.choices[0].message.content.trim();
         res.json({ email });
 
     } catch (error) {
@@ -59,7 +59,6 @@ app.post('/generate-email', async (req, res) => {
         }
     }
 });
-
 
 // Starte den Server auf dem angegebenen Port
 app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
