@@ -35,11 +35,11 @@ app.post('/generate-email', async (req, res) => {
         return res.status(400).json({ error: 'All fields (topic, recipient, sender, language) are required.' });
     }
 
-    // Spracheinstellungen für Grußformel und Inhalt
+    // Definiere die Grußformeln und den Prompt abhängig von der Sprache
     const greeting = language === 'de' ? 'Viele Grüße' : 'Best regards';
     const userPrompt = language === 'de'
-        ? `Schreibe eine professionelle E-Mail über: ${topic}. Die E-Mail soll an ${recipient} gehen und von ${sender} gesendet werden.`
-        : `Write a professional email about: ${topic}. The email should be addressed to ${recipient} and sent by ${sender}.`;
+        ? `Schreibe eine professionelle E-Mail über: ${topic}. Die E-Mail soll an ${recipient} gehen und von ${sender} gesendet werden. Beende die E-Mail mit 'Viele Grüße' und dem Namen des Absenders.`
+        : `Write a professional email about: ${topic}. The email should be addressed to ${recipient} and sent by ${sender}. End the email with 'Best regards' and the sender's name.`;
 
     try {
         const response = await axios.post('https://api.openai.com/v1/chat/completions', {
@@ -61,7 +61,12 @@ app.post('/generate-email', async (req, res) => {
             throw new Error('Failed to extract email from OpenAI response');
         }
 
-        // Grußformel hinzufügen
+        // Entfernen der unnötigen Grußformel, falls sie vom Modell hinzugefügt wurde.
+        if (emailContent.endsWith(greeting)) {
+            emailContent = emailContent.slice(0, -greeting.length).trim();
+        }
+
+        // Fügt die korrekte Grußformel am Ende der E-Mail hinzu
         emailContent += `\n\n${greeting},\n${sender}`;
 
         res.json({ email: emailContent });
