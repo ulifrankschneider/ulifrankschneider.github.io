@@ -5,36 +5,54 @@ document.getElementById('generate-email').addEventListener('click', async () => 
     const sender = document.getElementById('sender').value; // Absender
     const language = document.getElementById('language').value; // Sprache (en/de)
 
+    // Optional Fields
+    const relationship = document.querySelector('input[name="relationship"]:checked')?.value;
+    const length = document.querySelector('input[name="length"]:checked')?.value;
+    const context = document.getElementById('context').value;
+
+    // Validate required fields
     if (!topic || !recipient || !sender || !securityCode) {
-        alert("Please fill in all fields.");
+        alert("Please fill in all required fields.");
         return;
     }
 
+    // Prepare the body for the POST request
+    const requestBody = {
+        topic,
+        securityCode,
+        recipient,
+        sender,
+        language,
+        relationship,  // Optional field
+        length,        // Optional field
+        context        // Optional field
+    };
+
     try {
+        // Send the POST request with the data
         const response = await fetch('https://ulifrankschneider-github-io.onrender.com/generate-email', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ topic, securityCode, recipient, sender, language }) // Alle Daten übergeben
+            body: JSON.stringify(requestBody) // Pass all the data, including optional fields
         });
 
         if (response.ok) {
             const data = await response.json();
             const emailContent = data.email;
 
-            // Zeigt die generierte E-Mail an
+            // Show the generated email in the textarea
             document.getElementById('generated-email').value = emailContent;
 
-            // Fügt einen Button zum Download der .eml-Datei hinzu
+            // Add functionality to download as .eml file
             document.getElementById('download-eml').addEventListener('click', () => {
                 const emlContent = data.emlContent;
 
-                // Blob erstellen und zum Download anbieten
+                // Create a Blob and trigger download
                 const blob = new Blob([emlContent], { type: 'message/rfc822' });
                 const link = document.createElement('a');
                 link.href = URL.createObjectURL(blob);
-                link.download = 'generated-email.eml'; // Datei als .eml speichern
-
-                link.click(); // Download auslösen
+                link.download = 'generated-email.eml'; // Save as .eml file
+                link.click(); // Trigger the download
             });
 
         } else {
