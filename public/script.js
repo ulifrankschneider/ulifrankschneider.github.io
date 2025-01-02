@@ -1,6 +1,9 @@
 document.getElementById('generate-email').addEventListener('click', async () => {
     const topic = document.getElementById('email-topic').value;
     
+    const cors = require('cors');
+    app.use(cors());  // Add this line to allow cross-origin requests
+
     const response = await fetch('https://ulifrankschneider-github-io.onrender.com/generate-email', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
