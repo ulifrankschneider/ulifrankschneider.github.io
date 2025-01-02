@@ -1,7 +1,7 @@
 document.getElementById('generate-email').addEventListener('click', async () => {
     const topic = document.getElementById('email-topic').value;
     
-    const response = await fetch('http://localhost:3000/generate-email', {
+    const response = await fetch('https://ulifrankschneider-github-io.onrender.com/generate-email', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ topic })
