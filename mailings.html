@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Generator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f7fc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            padding: 20px;
+            flex-direction: column;
+        }
+
+        .container {
+            background-color: white;
+            width: 100%;
+            max-width: 800px; /* Set maximum width */
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2rem;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        label {
+            font-size: 1rem;
+            color: #555;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 20px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            color: #333;
+            transition: border-color 0.3s;
+            box-sizing: border-box;
+        }
+
+        input[type="text"]:focus {
+            border-color: #4CAF50;
+            outline: none;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 12px;
+            font-size: 1rem;
+            resize: vertical;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            color: #333;
+            margin-bottom: 20px;
+            height: 200px; /* Flexible height */
+            box-sizing: border-box;
+        }
+
+        .footer {
+            text-align: center;
+            font-size: 0.9rem;
+            color: #555;
+        }
+
+        .footer a {
+            color: #4CAF50;
+            text-decoration: none;
+        }
+
+        .security-code-container {
+            margin-bottom: 20px;
+        }
+
+        .alert {
+            color: red;
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 1rem;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        .nav-bar {
+            width: 100%;
+            background-color: #4CAF50;
+            padding: 15px 0;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .nav-bar a {
+            color: white;
+            font-size: 1.2rem;
+            text-decoration: none;
+            padding: 10px 15px;
+            margin: 0 10px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .nav-bar a:hover {
+            background-color: #45a049;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 1.6rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navigationsleiste -->
+    <div class="nav-bar">
+        <a href="/">Home</a> <!-- Hier kannst du die Index-Seite anpassen -->
+    </div>
+
+    <div class="container">
+        <h1>Email Generator</h1>
+
+        <!-- Sicherheitsabfrage -->
+        <div class="input-group security-code-container">
+            <label for="security-code">Enter security code to proceed:</label>
+            <input type="text" id="security-code" placeholder="Enter code here...">
+        </div>
+
+        <!-- Thema der E-Mail -->
+        <div class="input-group">
+            <label for="email-topic">What is the email about?</label>
+            <input type="text" id="email-topic" placeholder="Enter topic here...">
+        </div>
+
+        <!-- Buttons -->
+        <button id="generate-email">Generate Email</button>
+
+        <!-- Ergebnis-Textarea -->
+        <h2>Generated Email:</h2>
+        <textarea id="generated-email" readonly></textarea>
+
+        <!-- Send-Button -->
+        <button id="send-email">Send with Outlook</button>
+
+        <div class="alert" id="alert-message"></div>
+
+        <div class="footer">
+            <p>Powered by <a href="https://openai.com">OpenAI</a></p>
+        </div>
+    </div>
+
+    <script>
+        const correctCode = "X!911";  // Sicherheitscode
+
+        document.getElementById('generate-email').addEventListener('click', async () => {
+            const securityCode = document.getElementById('security-code').value;
+            const topic = document.getElementById('email-topic').value;
+
+            // Überprüfen, ob der Sicherheitscode korrekt ist
+            if (securityCode !== correctCode) {
+                document.getElementById('alert-message').textContent = "Incorrect security code!";
+                return;
+            } else {
+                document.getElementById('alert-message').textContent = "";  // Clear alert if code is correct
+            }
+
+            // Wenn der Sicherheitscode korrekt ist, Anfrage an den Server senden
+            const response = await fetch('https://ulifrankschneider-github-io.onrender.com/generate-email', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ topic })
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                document.getElementById('generated-email').value = data.email;
+            } else {
+                document.getElementById('alert-message').textContent = "Failed to generate email. Please try again.";
+            }
+        });
+
+        document.getElementById('send-email').addEventListener('click', () => {
+            const emailContent = document.getElementById('generated-email').value;
+            const mailtoLink = `mailto:?subject=Generated Email&body=${encodeURIComponent(emailContent)}`;
+            window.location.href = mailtoLink;
+        });
+    </script>
+</body>
+</html>
