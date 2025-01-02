@@ -42,7 +42,7 @@ app.post('/generate-email', async (req, res) => {
             }
         });
 
-        const email = response.data.choices[0].text.trim();
+        const email = response.data.choices[0].messages.trim();
         res.json({ email });
 
     } catch (error) {
