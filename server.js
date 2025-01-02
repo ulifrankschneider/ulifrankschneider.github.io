@@ -23,7 +23,7 @@ app.post('/generate-email', async (req, res) => {
     try {
         // Make a request to OpenAI's API to generate the email content
         const response = await axios.post('https://api.openai.com/v1/completions', {
-            model: 'text-davinci-003',  // You can use another model like GPT-4 if available
+            model: 'gpt-3.5-turbo',  // You can use another model like GPT-4 if available
             prompt: `Write a professional email about: ${topic}`,
             max_tokens: 150
         }, {
