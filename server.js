@@ -5,6 +5,9 @@ const axios = require('axios');
 const app = express();
 
 
+const cors = require('cors');
+app.use(cors());  // Add this line to allow cross-origin requests
+
 app.use((req, res, next) => {
     console.log(`Request received: ${req.method} ${req.url}`);
     console.log('Headers:', req.headers);
