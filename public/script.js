@@ -19,7 +19,24 @@ document.getElementById('generate-email').addEventListener('click', async () => 
 
         if (response.ok) {
             const data = await response.json();
-            document.getElementById('generated-email').value = data.email;
+            const emailContent = data.email;
+
+            // Zeigt die generierte E-Mail an
+            document.getElementById('generated-email').value = emailContent;
+
+            // Fügt einen Button zum Download der .eml-Datei hinzu
+            document.getElementById('download-eml').addEventListener('click', () => {
+                const emlContent = data.emlContent;
+
+                // Blob erstellen und zum Download anbieten
+                const blob = new Blob([emlContent], { type: 'message/rfc822' });
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = 'generated-email.eml'; // Datei als .eml speichern
+
+                link.click(); // Download auslösen
+            });
+
         } else {
             const error = await response.json();
             alert(`Error: ${error.error}`);

@@ -67,7 +67,12 @@ app.post('/generate-email', async (req, res) => {
         // Fügt die korrekte Grußformel am Ende der E-Mail hinzu
         const finalEmail = `${cleanEmail}\n\n${greeting},\n${sender}`;
 
-        res.json({ email: finalEmail });
+        // Erstelle die E-Mail im .eml-Format
+        const subject = `Subject: ${topic}`;
+        const emlContent = `From: ${sender}\r\nTo: ${recipient}\r\nSubject: ${subject}\r\nContent-Type: text/plain; charset="UTF-8"\r\n\r\n${finalEmail}\r\n\r\n${greeting},\r\n${sender}`;
+
+        // Sende die E-Mail im .eml-Format und als normalen Text zurück
+        res.json({ email: finalEmail, emlContent: emlContent });
 
     } catch (error) {
         console.error('Error generating email:', error.response?.data || error.message);
