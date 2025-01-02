@@ -61,15 +61,13 @@ app.post('/generate-email', async (req, res) => {
             throw new Error('Failed to extract email from OpenAI response');
         }
 
-        // Entfernen der unnötigen Grußformel, falls sie vom Modell hinzugefügt wurde.
-        if (emailContent.endsWith(greeting)) {
-            emailContent = emailContent.slice(0, -greeting.length).trim();
-        }
+        // Entfernen der doppelten Grußformel, falls sie vom Modell hinzugefügt wurde.
+        const cleanEmail = emailContent.replace(/(Best regards|Viele Grüße)[^]*$/, '').trim();
 
         // Fügt die korrekte Grußformel am Ende der E-Mail hinzu
-        emailContent += `\n\n${greeting},\n${sender}`;
+        const finalEmail = `${cleanEmail}\n\n${greeting},\n${sender}`;
 
-        res.json({ email: emailContent });
+        res.json({ email: finalEmail });
 
     } catch (error) {
         console.error('Error generating email:', error.response?.data || error.message);
