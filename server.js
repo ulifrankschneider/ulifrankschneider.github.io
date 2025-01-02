@@ -28,9 +28,12 @@ app.post('/generate-email', async (req, res) => {
     }
 
     try {
-        const response = await axios.post('https://api.openai.com/v1/completions', {
+        const response = await axios.post('https://api.openai.com/v1/chat/completions', {
             model: 'gpt-3.5-turbo', // Change the model if needed
-            prompt: `Write a professional email about: ${topic}`,
+            messages: [
+                { role: 'system', content: 'You are a helpful assistant.' },
+                { role: 'user', content: `Write a professional email about: ${topic}` }
+            ],
             max_tokens: 150
         }, {
             headers: {
