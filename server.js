@@ -23,37 +23,40 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.post('/generate-email', async (req, res) => {
     const { topic } = req.body;
 
-    // Wenn das Thema fehlt, gebe einen Fehler zurück
     if (!topic) {
         return res.status(400).json({ error: 'Topic is required' });
     }
 
     try {
-        // Anfrage an OpenAI-API zur Generierung des E-Mail-Inhalts
         const response = await axios.post('https://api.openai.com/v1/completions', {
-            model: 'gpt-3.5-turbo',  // Verwende GPT-3.5, nutze "gpt-4", wenn du GPT-4 verwenden möchtest
+            model: 'gpt-3.5-turbo', // Change the model if needed
             prompt: `Write a professional email about: ${topic}`,
             max_tokens: 150
         }, {
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${openaiApiKey}`  // Nutze den Umgebungsvariablen-Schlüssel hier
+                'Authorization': `Bearer ${openaiApiKey}`
             }
         });
 
-        // Extrahiere den generierten E-Mail-Inhalt aus der OpenAI-Antwort
-        const email = response.data.choices[0].text.trim(); // Update basierend auf der Antwortstruktur
-
-        // Sende die generierte E-Mail als Antwort zurück
+        const email = response.data.choices[0].text.trim();
         res.json({ email });
-    } catch (error) {
-        // Fehlerprotokollierung für Debugging
-        console.error('Error generating email:', error);
 
-        // Sende eine generische Fehlermeldung zurück
-        res.status(500).json({ error: 'Error generating email' });
+    } catch (error) {
+        // Detailed error logging
+        if (error.response) {
+            console.error('Error response from OpenAI:', error.response.data);
+            res.status(500).json({
+                error: 'Error generating email',
+                details: error.response.data
+            });
+        } else {
+            console.error('Unexpected error:', error.message);
+            res.status(500).json({ error: 'Unexpected error occurred' });
+        }
     }
 });
+
 
 // Starte den Server auf dem angegebenen Port
 app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
