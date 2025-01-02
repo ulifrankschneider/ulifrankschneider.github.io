@@ -5,6 +5,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Email Generator</title>
     <link rel="stylesheet" href="styles.css"> <!-- Verweis auf CSS-Datei -->
+    <style>
+        .section {
+            margin-bottom: 15px;
+        }
+
+        .section label {
+            font-weight: bold;
+        }
+
+        .toggle-button {
+            margin: 10px 0;
+            cursor: pointer;
+            background-color: #f0f0f0;
+            border: 1px solid #ccc;
+            padding: 10px;
+        }
+
+        .hidden-section {
+            display: none;
+            margin-top: 10px;
+        }
+    </style>
 </head>
 <body>
     <nav>
@@ -37,6 +59,30 @@
     <label for="security-code">Enter Security Code:</label><br>
     <input type="password" id="security-code" placeholder="Enter security code..." style="width: 100%; margin: 10px 0;"><br>
 
+    <!-- Section: Optional Fields (Dropdowns, etc.) -->
+    <div class="section">
+        <div class="toggle-button" id="toggle-optional-fields">Show optional fields</div>
+        <div id="optional-fields" class="hidden-section">
+            <div class="section">
+                <label for="relationship">Relationship to Recipient:</label><br>
+                <input type="radio" id="friend" name="relationship" value="friend"> Friendly<br>
+                <input type="radio" id="assertive" name="relationship" value="assertive"> Assertive<br>
+                <input type="radio" id="formal" name="relationship" value="formal"> Very Formal<br>
+            </div>
+
+            <div class="section">
+                <label for="length">Length of Email:</label><br>
+                <input type="radio" id="detailed" name="length" value="detailed"> Detailed (explanatory)<br>
+                <input type="radio" id="concise" name="length" value="concise"> Concise (focused on essentials)<br>
+            </div>
+
+            <div class="section">
+                <label for="context">Additional Context (optional):</label><br>
+                <textarea id="context" placeholder="Provide any additional context to help formulate the email..." style="width: 100%; height: 100px;"></textarea><br>
+            </div>
+        </div>
+    </div>
+
     <!-- Buttons -->
     <button id="generate-email">Generate Email</button>
     <h2>Generated Email:</h2>
@@ -44,7 +90,20 @@
     <button id="send-email">Send with Outlook</button>
     <button id="download-eml">Download as Outlook (.eml)</button>
 
-
     <script src="script.js"></script> <!-- Verweis auf JavaScript-Datei -->
+    <script>
+        // JavaScript für das Ein-/Ausklappen der optionalen Felder
+        document.getElementById('toggle-optional-fields').addEventListener('click', () => {
+            const optionalFieldsSection = document.getElementById('optional-fields');
+            const toggleButton = document.getElementById('toggle-optional-fields');
+            if (optionalFieldsSection.style.display === 'none' || optionalFieldsSection.style.display === '') {
+                optionalFieldsSection.style.display = 'block';
+                toggleButton.textContent = 'Hide optional fields';
+            } else {
+                optionalFieldsSection.style.display = 'none';
+                toggleButton.textContent = 'Show optional fields';
+            }
+        });
+    </script>
 </body>
 </html>
