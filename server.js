@@ -7,9 +7,10 @@ const app = express();
 app.use(bodyParser.json());
 
 // Accessing the OpenAI API key from environment variables
-const openaiApiKey = process.env.OPENAI_API_KEY; // Make sure .env file is properly loaded
+const openaiApiKey = process.env.OPENAI_API_KEY; // Ensure .env file is properly loaded
 
-const PORT = 3000; // Port where your server will run
+// Set the port (use environment variable for deployment platforms like Render or Vercel)
+const PORT = process.env.PORT || 3000; // Default to 3000 if no PORT is provided
 
 // Endpoint to generate an email based on the topic
 app.post('/generate-email', async (req, res) => {
@@ -23,7 +24,7 @@ app.post('/generate-email', async (req, res) => {
     try {
         // Make a request to OpenAI's API to generate the email content
         const response = await axios.post('https://api.openai.com/v1/completions', {
-            model: 'gpt-3.5-turbo',  // You can use another model like GPT-4 if available
+            model: 'gpt-4o-mini-2024-07-18',  // You can use GPT-4 or other models if available
             prompt: `Write a professional email about: ${topic}`,
             max_tokens: 150
         }, {
@@ -39,7 +40,10 @@ app.post('/generate-email', async (req, res) => {
         // Send the generated email as a response
         res.json({ email });
     } catch (error) {
+        // Log error details for debugging purposes
         console.error('Error generating email:', error);
+
+        // Send a generic error message to the user
         res.status(500).json({ error: 'Error generating email' });
     }
 });
