@@ -1,0 +1,21 @@
+{
+  "name": "ulifrankschneider.github.io",
+  "version": "1.0.0",
+  "description": "my USC repository for projects",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ulifrankschneider/ulifrankschneider.github.io.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ulifrankschneider/ulifrankschneider.github.io/issues"
+  },
+  "homepage": "https://github.com/ulifrankschneider/ulifrankschneider.github.io#readme",
+  "keywords": []
+}
