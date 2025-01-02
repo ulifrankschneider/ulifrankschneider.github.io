@@ -7,6 +7,10 @@ const path = require('path'); // Ermöglicht den Zugriff auf den Dateipfad
 const app = express();
 app.use(bodyParser.json());
 
+const cors = require('cors');
+    app.use(cors());  // Add this line to allow cross-origin requests
+
+
 // Zugriff auf den OpenAI-API-Schlüssel aus den Umgebungsvariablen
 const openaiApiKey = process.env.OPENAI_API_KEY;
 
