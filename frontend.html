@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        textarea {
+            width: 100%;
+            height: 150px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Email Generator</h1>
+    <label for="email-topic">What is the email about?</label><br>
+    <input type="text" id="email-topic" placeholder="Enter topic here..." style="width: 100%; margin: 10px 0;"><br>
+    <button id="generate-email">Generate Email</button>
+    <h2>Generated Email:</h2>
+    <textarea id="generated-email" readonly></textarea><br>
+    <button id="send-email">Send with Outlook</button>
+
+    <script>
+        document.getElementById('generate-email').addEventListener('click', async () => {
+            const topic = document.getElementById('email-topic').value;
+            const response = await fetch('/generate-email', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ topic })
+            });
+            const data = await response.json();
+            document.getElementById('generated-email').value = data.email;
+        });
+
+        document.getElementById('send-email').addEventListener('click', () => {
+            const emailContent = document.getElementById('generated-email').value;
+            const mailtoLink = `mailto:?subject=Generated Email&body=${encodeURIComponent(emailContent)}`;
+            window.location.href = mailtoLink;
+        });
+    </script>
+</body>
+</html>
