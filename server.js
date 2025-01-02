@@ -3,6 +3,8 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const axios = require('axios');
 
+
+
 const app = express();
 app.use(bodyParser.json());
 
@@ -53,3 +55,4 @@ app.post('/generate-email', async (req, res) => {
 
 // Start the server on the specified port
 app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
+console.log(`Server running on http://localhost:${PORT}`);
