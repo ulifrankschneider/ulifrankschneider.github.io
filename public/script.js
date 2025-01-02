@@ -3,7 +3,7 @@ document.getElementById('generate-email').addEventListener('click', async () => 
     const response = await fetch('https://ulifrankschneider-github-io.onrender.com/generate-email', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ topic })
+        body: JSON.stringify({ topic, securityCode }) // Sicherheitscode mit senden
     });
     const data = await response.json();
     document.getElementById('generated-email').value = data.email;

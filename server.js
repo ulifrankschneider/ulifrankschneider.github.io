@@ -22,6 +22,12 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.post('/generate-email', async (req, res) => {
     const { topic } = req.body;
 
+    // Sicherheitscode überprüfen
+    const expectedCode = "X!911"; // Der erwartete Sicherheitscode
+    if (securityCode !== expectedCode) {
+        return res.status(403).json({ error: 'Invalid or missing security code' }); // Zugriff verweigern
+    }
+
     if (!topic) {
         return res.status(400).json({ error: 'Topic is required' });
     }
