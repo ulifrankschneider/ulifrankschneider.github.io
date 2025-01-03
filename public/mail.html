@@ -45,6 +45,12 @@
     <label for="email-topic">What is the email about?</label><br>
     <input type="text" id="email-topic" placeholder="Enter topic here..." style="width: 100%; margin: 10px 0;"><br>
 
+    <!-- Eingabefeld für den Sicherheitscode (Mandatory Field) -->
+    <div class="section">
+        <label for="security-code">Enter Security Code:</label><br>
+        <input type="password" id="security-code" placeholder="Enter security code..." style="width: 100%; margin: 10px 0;" required><br>
+    </div>
+
     <!-- Section: Optional Fields (Dropdowns, etc.) -->
     <div class="section">
         <div class="toggle-button" id="toggle-optional-fields">Show optional fields</div>
@@ -68,12 +74,6 @@
                     <option value="en">English</option>
                     <option value="de">Deutsch</option>
                 </select><br>
-            </div>
-
-            <!-- Eingabefeld für den Sicherheitscode -->
-            <div class="section">
-                <label for="security-code">Enter Security Code:</label><br>
-                <input type="password" id="security-code" placeholder="Enter security code..." style="width: 100%; margin: 10px 0;"><br>
             </div>
 
             <!-- Relationship to Recipient (Dropdown mit Emojis) -->

@@ -1,3 +1,14 @@
+document.getElementById('toggle-optional-fields').addEventListener('click', () => {
+    const optionalFieldsSection = document.getElementById('optional-fields');
+    if (optionalFieldsSection.style.display === 'none' || optionalFieldsSection.style.display === '') {
+        optionalFieldsSection.style.display = 'block';
+        document.getElementById('toggle-optional-fields').textContent = 'Hide optional fields';
+    } else {
+        optionalFieldsSection.style.display = 'none';
+        document.getElementById('toggle-optional-fields').textContent = 'Show optional fields';
+    }
+});
+
 document.getElementById('generate-email').addEventListener('click', async () => {
     const topic = document.getElementById('email-topic').value;
     const securityCode = document.getElementById('security-code').value; // Sicherheitscode vom Benutzer
@@ -8,11 +19,11 @@ document.getElementById('generate-email').addEventListener('click', async () => 
     // Optional Fields
     const relationship = document.getElementById('relationship').value;  // Dropdown für Beziehung
     const length = document.getElementById('length').value;  // Slider für Länge (Range-Input)
-    const context = document.getElementById('context').value; // Optionales Kontextfeld
+    const context = document.getElementById('context').value;
 
-    // Validate required fields
-    if (!topic || !recipient || !sender || !securityCode) {
-        alert("Please fill in all required fields.");
+    // Validate required fields (Including security code)
+    if (!topic || !recipient || !sender || !language || !securityCode) {
+        alert("Please fill in all required fields including the security code.");
         return;
     }
 
@@ -30,29 +41,29 @@ document.getElementById('generate-email').addEventListener('click', async () => 
 
     try {
         // Send the POST request with the data
-        const response = await fetch('https://yourserver.com/generate-email', { // Ersetze dies mit deinem Server-Endpunkt
+        const response = await fetch('https://ulifrankschneider-github-io.onrender.com/generate-email', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(requestBody) // Alle Daten, einschließlich der optionalen Felder, werden gesendet
+            body: JSON.stringify(requestBody) // Pass all the data, including optional fields
         });
 
         if (response.ok) {
             const data = await response.json();
             const emailContent = data.email;
 
-            // Zeige die generierte E-Mail im Textbereich an
+            // Show the generated email in the textarea
             document.getElementById('generated-email').value = emailContent;
 
-            // Funktionalität für den Download der E-Mail im .eml-Format hinzufügen
+            // Add functionality to download as .eml file
             document.getElementById('download-eml').addEventListener('click', () => {
                 const emlContent = data.emlContent;
 
-                // Blob erstellen und den Download auslösen
+                // Create a Blob and trigger download
                 const blob = new Blob([emlContent], { type: 'message/rfc822' });
                 const link = document.createElement('a');
                 link.href = URL.createObjectURL(blob);
-                link.download = 'generated-email.eml'; // Speichern als .eml-Datei
-                link.click(); // Download auslösen
+                link.download = 'generated-email.eml'; // Save as .eml file
+                link.click(); // Trigger the download
             });
 
         } else {
@@ -65,7 +76,6 @@ document.getElementById('generate-email').addEventListener('click', async () => 
     }
 });
 
-// Event listener für den Senden-Button (E-Mail über "mailto" öffnen)
 document.getElementById('send-email').addEventListener('click', () => {
     const emailContent = document.getElementById('generated-email').value;
     const recipient = document.getElementById('recipient').value;
@@ -77,14 +87,4 @@ document.getElementById('send-email').addEventListener('click', () => {
 
     const mailtoLink = `mailto:${encodeURIComponent(recipient)}?subject=Generated Email&body=${encodeURIComponent(emailContent)}`;
     window.location.href = mailtoLink;
-});
-
-// Slider: Update the length display when the slider value changes
-document.getElementById('length').addEventListener('input', function() {
-    const lengthValue = document.getElementById('length').value;
-    const lengthText = lengthValue === "1" ? "Very Brief" :
-                       lengthValue === "2" ? "Brief" :
-                       lengthValue === "3" ? "Medium" :
-                       lengthValue === "4" ? "Detailed" : "Very Detailed";
-    document.getElementById('length-value').textContent = lengthText;
 });
