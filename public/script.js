@@ -1,3 +1,4 @@
+// Toggle visibility of the optional fields section
 document.getElementById('toggle-optional-fields').addEventListener('click', () => {
     const optionalFieldsSection = document.getElementById('optional-fields');
     if (optionalFieldsSection.style.display === 'none' || optionalFieldsSection.style.display === '') {
@@ -9,6 +10,7 @@ document.getElementById('toggle-optional-fields').addEventListener('click', () =
     }
 });
 
+// Event listener for generating the email
 document.getElementById('generate-email').addEventListener('click', async () => {
     const topic = document.getElementById('email-topic').value;
     const securityCode = document.getElementById('security-code').value;
@@ -22,7 +24,7 @@ document.getElementById('generate-email').addEventListener('click', async () => 
     const length = document.getElementById('length').value || '3';
     const context = document.getElementById('context').value || '';
 
-    // Validate required fields (Including security code)
+    // Validate required fields (including security code)
     if (!topic || !securityCode) {
         alert("Please fill in all required fields including the security code.");
         return;
@@ -51,7 +53,7 @@ document.getElementById('generate-email').addEventListener('click', async () => 
 
         if (response.ok) {
             const data = await response.json();
-            console.log('Server response:', data);
+            console.log('Server response:', data); // Check server response in the console
 
             // Show the generated email in the textarea
             document.getElementById('generated-email').value = data.email;
@@ -93,9 +95,10 @@ document.getElementById('generate-email').addEventListener('click', async () => 
     }
 });
 
+// Event listener for sending the email via the user's email client
 document.getElementById('send-email').addEventListener('click', () => {
     const emailContent = document.getElementById('generated-email').value;
-    const recipient = document.getElementById('recipient').value || 'recipient@example.com'; // Default-Wert für Empfänger
+    const recipient = document.getElementById('recipient').value || 'recipient@example.com';
 
     if (!emailContent) {
         alert("Please generate the email first.");
@@ -103,5 +106,5 @@ document.getElementById('send-email').addEventListener('click', () => {
     }
 
     const mailtoLink = `mailto:${encodeURIComponent(recipient)}?subject=Generated Email&body=${encodeURIComponent(emailContent)}`;
-    window.location.href = mailtoLink;
+    window.location.href = mailtoLink; // Open the default email client with the generated content
 });
