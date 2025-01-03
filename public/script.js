@@ -6,8 +6,8 @@ document.getElementById('generate-email').addEventListener('click', async () => 
     const language = document.getElementById('language').value; // Sprache (en/de)
 
     // Optional Fields
-    const relationship = document.querySelector('input[name="relationship"]:checked')?.value;
-    const length = document.querySelector('input[name="length"]:checked')?.value;
+    const relationship = document.getElementById('relationship').value;  // Dropdown für Beziehung
+    const length = document.getElementById('length').value;  // Slider für Länge (Range-Input)
     const context = document.getElementById('context').value;
 
     // Validate required fields
@@ -23,8 +23,8 @@ document.getElementById('generate-email').addEventListener('click', async () => 
         recipient,
         sender,
         language,
-        relationship,  // Optional field
-        length,        // Optional field
+        relationship,  // Optional field (from dropdown)
+        length,        // Optional field (from slider)
         context        // Optional field
     };
 

@@ -1,4 +1,4 @@
-require('dotenv').config(); // Lade Umgebungsvariablen
+require('dotenv').config(); // Load environment variables
 const express = require('express');
 const bodyParser = require('body-parser');
 const axios = require('axios');
@@ -25,36 +25,36 @@ app.post('/generate-email', async (req, res) => {
     console.log('Incoming request body:', req.body);
     const { topic, securityCode, recipient, sender, language, relationship, length, context } = req.body;
 
-    // Sicherheitscode überprüfen
+    // Check security code
     if (securityCode !== expectedCode) {
         return res.status(403).json({ error: 'Invalid or missing security code' });
     }
 
-    // Validierung der erforderlichen Felder
+    // Validate required fields
     if (!topic || !recipient || !sender || !language) {
         return res.status(400).json({ error: 'All fields (topic, recipient, sender, language) are required.' });
     }
 
-    // Definiere die Grußformeln und den Prompt abhängig von der Sprache
+    // Define the greeting depending on the language
     const greeting = language === 'de' ? 'Viele Grüße' : 'Best regards';
 
-    // Definiere den Prompt unter Berücksichtigung der optionalen Felder
+    // Define the prompt based on the optional fields
     let userPrompt = language === 'de'
-        ? `Schreibe eine professionelle E-Mail über: ${topic}. Die E-Mail soll an ${recipient} gehen und von ${sender} gesendet werden.`
-        : `Write a professional email about: ${topic}. The email should be addressed to ${recipient} and sent by ${sender}.`;
+        ? `Schreibe eine professionelle E-Mail über: ${topic}. Die E-Mail soll an ${recipient} gehen und von ${sender} gesendet werden. Vermeide übliche Begrüßungsformeln wie "Ich hoffe, diese E-Mail erreicht Sie wohl".`
+        : `Write a professional email about: ${topic}. The email should be addressed to ${recipient} and sent by ${sender}. Avoid using typical opening phrases like "I hope this email finds you well".`;
 
-    // Optional: Beziehung, Länge und Kontext in den Prompt integrieren
+    // Optionally include relationship, length, and context in the prompt
     if (relationship) {
-        userPrompt += ` Die Beziehung ist: ${relationship}.`;
+        userPrompt += ` The relationship is: ${relationship}.`;
     }
     if (length) {
-        userPrompt += ` Die E-Mail soll ${length} sein.`;
+        userPrompt += ` The email should be ${length}.`;
     }
     if (context) {
-        userPrompt += ` Der Kontext: ${context}.`;
+        userPrompt += ` The context: ${context}.`;
     }
 
-    userPrompt += ` Beende die E-Mail mit '${greeting}' und dem Namen des Absenders.`;
+    userPrompt += ` Conclude the email with '${greeting}' and the sender's name.`;
 
     try {
         const response = await axios.post('https://api.openai.com/v1/chat/completions', {
@@ -76,17 +76,17 @@ app.post('/generate-email', async (req, res) => {
             throw new Error('Failed to extract email from OpenAI response');
         }
 
-        // Entfernen der doppelten Grußformel, falls sie vom Modell hinzugefügt wurde.
+        // Remove typical greeting at the end if the AI included one
         const cleanEmail = emailContent.replace(/(Best regards|Viele Grüße)[^]*$/, '').trim();
 
-        // Fügt die korrekte Grußformel am Ende der E-Mail hinzu
+        // Add the correct greeting at the end of the email
         const finalEmail = `${cleanEmail}\n\n${greeting},\n${sender}`;
 
-        // Erstelle die E-Mail im .eml-Format
+        // Create the email in .eml format
         const subject = `Subject: ${topic}`;
         const emlContent = `From: ${sender}\r\nTo: ${recipient}\r\nSubject: ${subject}\r\nContent-Type: text/plain; charset="UTF-8"\r\n\r\n${finalEmail}\r\n\r\n${greeting},\r\n${sender}`;
 
-        // Sende die E-Mail im .eml-Format und als normalen Text zurück
+        // Return the email content and .eml format
         res.json({ email: finalEmail, emlContent: emlContent });
 
     } catch (error) {
