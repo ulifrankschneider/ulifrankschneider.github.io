@@ -78,6 +78,9 @@ app.post('/generate-email', async (req, res) => {
             }
         });
 
+        // Log the full response to debug
+        console.log('OpenAI Response:', response.data);
+
         let emailContent = response.data?.choices?.[0]?.message?.content?.trim();
         if (!emailContent) {
             throw new Error('Failed to extract email from OpenAI response');

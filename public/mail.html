@@ -27,7 +27,7 @@
             margin-top: 10px;
         }
 
-        /* Styling für Slider */
+        /* Styling for Slider */
         .slider {
             width: 100%;
         }
@@ -41,7 +41,7 @@
     </nav>
     <h1>Email Generator</h1>
 
-    <!-- Eingabefelder für Pflichtangaben -->
+    <!-- Required Fields -->
     <div class="section">
         <label for="email-topic">What is the email about?</label><br>
         <input type="text" id="email-topic" placeholder="Enter topic here..." style="width: 100%; margin: 10px 0;" required><br>
@@ -51,7 +51,7 @@
         <input type="password" id="security-code" placeholder="Enter security code..." style="width: 100%; margin: 10px 0;" required><br>
     </div>
 
-    <!-- Optionale Felder -->
+    <!-- Optional Fields -->
     <div class="section">
         <div class="toggle-button" id="toggle-optional-fields">Show optional fields</div>
         <div id="optional-fields" class="hidden-section">
@@ -106,30 +106,74 @@
     <button id="download-eml">Download as Outlook (.eml)</button>
 
     <script>
+        // Toggle optional fields visibility
         document.getElementById('toggle-optional-fields').addEventListener('click', () => {
             const optionalFields = document.getElementById('optional-fields');
             optionalFields.style.display = optionalFields.style.display === 'none' || !optionalFields.style.display ? 'block' : 'none';
         });
 
-        // Update length slider text
+        // Update the text next to the length slider
         document.getElementById('length').addEventListener('input', (e) => {
             const lengthText = ['Very Short', 'Short', 'Medium', 'Long', 'Very Long'];
             document.getElementById('length-value').textContent = lengthText[e.target.value - 1];
         });
 
-        // Ensure mandatory fields are filled before sending or generating email
-        document.getElementById('generate-email').addEventListener('click', () => {
-            const requiredFields = ['email-topic', 'security-code'];
-            for (const id of requiredFields) {
-                const field = document.getElementById(id);
-                if (!field.value) {
-                    alert(`Please fill in the required field: ${field.previousElementSibling.textContent}`);
-                    return;
-                }
+        // Generate email function
+        document.getElementById('generate-email').addEventListener('click', async () => {
+            const topic = document.getElementById('email-topic').value;
+            const securityCode = document.getElementById('security-code').value;
+            const recipient = document.getElementById('email-recipient').value || 'recipient@example.com';
+            const sender = document.getElementById('sender').value || 'anonymous@example.com';
+            const language = document.getElementById('language').value || 'en';
+            const recipientName = document.getElementById('recipient-name').value || 'Recipient';
+            
+            // Optional fields
+            const relationship = document.getElementById('relationship').value || '';
+            const length = document.getElementById('length').value || '3';
+            const context = document.getElementById('context').value || '';
+
+            // Validate required fields (Including security code)
+            if (!topic || !securityCode) {
+                alert("Please fill in all required fields including the security code.");
+                return;
             }
-            // Call your generate email function here
+
+            // Prepare the body for the POST request
+            const requestBody = {
+                topic,
+                securityCode,
+                recipient,
+                sender,
+                recipientName,
+                language,
+                relationship,  // Optional field (from dropdown)
+                length,        // Optional field (from slider)
+                context        // Optional field
+            };
+
+            try {
+                // Send POST request to the server
+                const response = await fetch('http://localhost:3000/generate-email', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(requestBody)
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log('Generated Email:', data.email);
+                    document.getElementById('generated-email').value = data.email;
+                } else {
+                    const error = await response.json();
+                    alert(`Error: ${error.error}`);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An unexpected error occurred.');
+            }
         });
 
+        // Send email with Outlook via mailto
         document.getElementById('send-email').addEventListener('click', () => {
             const emailContent = document.getElementById('generated-email').value;
             const emailRecipient = document.getElementById('email-recipient').value;
@@ -143,6 +187,7 @@
             window.location.href = mailtoLink;
         });
 
+        // Download the email content as .eml file
         document.getElementById('download-eml').addEventListener('click', () => {
             const emailContent = document.getElementById('generated-email').value;
             if (!emailContent) {
