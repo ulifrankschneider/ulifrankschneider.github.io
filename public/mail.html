@@ -47,14 +47,6 @@
         <input type="text" id="email-topic" placeholder="Enter topic here..." style="width: 100%; margin: 10px 0;" required><br>
     </div>
     <div class="section">
-        <label for="sender">Sender (From):</label><br>
-        <input type="text" id="sender" placeholder="Enter sender's email..." style="width: 100%; margin: 10px 0;" required><br>
-    </div>
-    <div class="section">
-        <label for="recipient-name">Recipient (Name):</label><br>
-        <input type="text" id="recipient-name" placeholder="Enter recipient's name..." style="width: 100%; margin: 10px 0;" required><br>
-    </div>
-    <div class="section">
         <label for="security-code">Enter Security Code:</label><br>
         <input type="password" id="security-code" placeholder="Enter security code..." style="width: 100%; margin: 10px 0;" required><br>
     </div>
@@ -63,6 +55,14 @@
     <div class="section">
         <div class="toggle-button" id="toggle-optional-fields">Show optional fields</div>
         <div id="optional-fields" class="hidden-section">
+            <div class="section">
+                <label for="sender">Sender (From):</label><br>
+                <input type="text" id="sender" placeholder="Enter sender's name..." style="width: 100%; margin: 10px 0;" required><br>
+            </div>
+            <div class="section">
+                <label for="recipient-name">Recipient (Name):</label><br>
+                <input type="text" id="recipient-name" placeholder="Enter recipient's name..." style="width: 100%; margin: 10px 0;" required><br>
+            </div>
             <div class="section">
                 <label for="email-recipient">Recipient Email (Optional):</label><br>
                 <input type="email" id="email-recipient" placeholder="Enter recipient's email address..." style="width: 100%; margin: 10px 0;"><br>
