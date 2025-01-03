@@ -1,4 +1,3 @@
-// Toggle visibility of the optional fields section
 document.getElementById('toggle-optional-fields').addEventListener('click', () => {
     const optionalFieldsSection = document.getElementById('optional-fields');
     if (optionalFieldsSection.style.display === 'none' || optionalFieldsSection.style.display === '') {
@@ -10,27 +9,23 @@ document.getElementById('toggle-optional-fields').addEventListener('click', () =
     }
 });
 
-// Event listener for generating the email
 document.getElementById('generate-email').addEventListener('click', async () => {
     const topic = document.getElementById('email-topic').value;
     const securityCode = document.getElementById('security-code').value;
-    const recipient = document.getElementById('recipient').value || 'recipient@example.com';
+    const recipient = document.getElementById('email-recipient').value || 'recipient@example.com';
     const sender = document.getElementById('sender').value || 'anonymous@example.com';
     const language = document.getElementById('language').value || 'en';
     const recipientName = document.getElementById('recipient-name').value || 'Recipient';
-    
-    // Optional Fields
+
     const relationship = document.getElementById('relationship').value || '';
     const length = document.getElementById('length').value || '3';
     const context = document.getElementById('context').value || '';
 
-    // Validate required fields (including security code)
     if (!topic || !securityCode) {
         alert("Please fill in all required fields including the security code.");
         return;
     }
 
-    // Prepare the body for the POST request
     const requestBody = {
         topic,
         securityCode,
@@ -38,27 +33,22 @@ document.getElementById('generate-email').addEventListener('click', async () => 
         sender,
         recipientName,
         language,
-        relationship,  // Optional field (from dropdown)
-        length,        // Optional field (from slider)
-        context        // Optional field
+        relationship,
+        length,
+        context
     };
 
     try {
-        // Send the POST request with the data
         const response = await fetch('https://ulifrankschneider-github-io.onrender.com/generate-email', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(requestBody) // Pass all the data, including optional fields
+            body: JSON.stringify(requestBody)
         });
 
         if (response.ok) {
             const data = await response.json();
-            console.log('Server response:', data); // Check server response in the console
-
-            // Show the generated email in the textarea
             document.getElementById('generated-email').value = data.email;
 
-            // Add functionality to download as .eml file
             document.getElementById('download-eml').addEventListener('click', () => {
                 const emailContent = document.getElementById('generated-email').value;
                 if (!emailContent) {
@@ -67,21 +57,14 @@ document.getElementById('generate-email').addEventListener('click', async () => 
                 }
 
                 const sender = document.getElementById('sender').value || 'anonymous@example.com';
-                const recipient = document.getElementById('recipient').value || 'recipient@example.com';
+                const recipient = document.getElementById('email-recipient').value || 'recipient@example.com';
 
-                const emlContent = `
-                    Subject: Generated Email
-                    From: ${sender}
-                    To: ${recipient}
-                    
-                    ${emailContent}
-                `;
+                const emlContent = `From: ${sender}\r\nTo: ${recipient}\r\nSubject: Generated Email\r\nContent-Type: text/plain; charset="UTF-8"\r\n\r\n${emailContent}\r\n\r\nBest regards,\r\n${sender}`;
 
-                // Create a Blob and trigger download
                 const blob = new Blob([emlContent], { type: 'message/rfc822' });
                 const link = document.createElement('a');
                 link.href = URL.createObjectURL(blob);
-                link.download = 'generated-email.eml'; // Save as .eml file
+                link.download = 'generated-email.eml';
                 link.click();
             });
 
@@ -95,10 +78,9 @@ document.getElementById('generate-email').addEventListener('click', async () => 
     }
 });
 
-// Event listener for sending the email via the user's email client
 document.getElementById('send-email').addEventListener('click', () => {
     const emailContent = document.getElementById('generated-email').value;
-    const recipient = document.getElementById('recipient').value || 'recipient@example.com';
+    const recipient = document.getElementById('email-recipient').value || 'recipient@example.com';
 
     if (!emailContent) {
         alert("Please generate the email first.");
@@ -106,5 +88,5 @@ document.getElementById('send-email').addEventListener('click', () => {
     }
 
     const mailtoLink = `mailto:${encodeURIComponent(recipient)}?subject=Generated Email&body=${encodeURIComponent(emailContent)}`;
-    window.location.href = mailtoLink; // Open the default email client with the generated content
+    window.location.href = mailtoLink;
 });
