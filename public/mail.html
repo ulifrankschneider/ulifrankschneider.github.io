@@ -4,8 +4,34 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Email Generator</title>
-    <!-- Verweis auf die externe CSS-Datei -->
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="styles.css"> <!-- Verweis auf CSS-Datei -->
+    <style>
+        .section {
+            margin-bottom: 15px;
+        }
+
+        .section label {
+            font-weight: bold;
+        }
+
+        .toggle-button {
+            margin: 10px 0;
+            cursor: pointer;
+            background-color: #f0f0f0;
+            border: 1px solid #ccc;
+            padding: 10px;
+        }
+
+        .hidden-section {
+            display: none;
+            margin-top: 10px;
+        }
+
+        /* Styling für Slider */
+        .slider {
+            width: 100%;
+        }
+    </style>
 </head>
 <body>
     <nav>
@@ -15,53 +41,59 @@
     </nav>
     <h1>Email Generator</h1>
 
-    <!-- Eingabefeld für den Adressaten -->
-    <label for="recipient">Recipient (Name):</label><br>
-    <input type="text" id="recipient" placeholder="Enter recipient's name..." style="width: 100%; margin: 10px 0;"><br>
-
-    <!-- Eingabefeld für den Absender -->
-    <label for="sender">Sender (From):</label><br>
-    <input type="text" id="sender" placeholder="Enter sender's email..." style="width: 100%; margin: 10px 0;"><br>
-
-    <!-- Dropdown für die Sprache -->
-    <label for="language">Select Language:</label><br>
-    <select id="language" style="width: 100%; margin: 10px 0;">
-        <option value="en">English</option>
-        <option value="de">Deutsch</option>
-    </select><br>
-
-    <!-- Eingabefeld für das Thema -->
+    <!-- Eingabefeld für das Thema (Pflichtfeld) -->
     <label for="email-topic">What is the email about?</label><br>
     <input type="text" id="email-topic" placeholder="Enter topic here..." style="width: 100%; margin: 10px 0;"><br>
-
-    <!-- Eingabefeld für den Sicherheitscode -->
-    <label for="security-code">Enter Security Code:</label><br>
-    <input type="password" id="security-code" placeholder="Enter security code..." style="width: 100%; margin: 10px 0;"><br>
 
     <!-- Section: Optional Fields (Dropdowns, etc.) -->
     <div class="section">
         <div class="toggle-button" id="toggle-optional-fields">Show optional fields</div>
         <div id="optional-fields" class="hidden-section">
-            <!-- Relationship to Recipient -->
+            <!-- Eingabefeld für den Adressaten (optional) -->
+            <div class="section">
+                <label for="recipient">Recipient (Name):</label><br>
+                <input type="text" id="recipient" placeholder="Enter recipient's name..." style="width: 100%; margin: 10px 0;"><br>
+            </div>
+
+            <!-- Eingabefeld für den Absender (optional) -->
+            <div class="section">
+                <label for="sender">Sender (From):</label><br>
+                <input type="text" id="sender" placeholder="Enter sender's email..." style="width: 100%; margin: 10px 0;"><br>
+            </div>
+
+            <!-- Dropdown für die Sprache (optional) -->
+            <div class="section">
+                <label for="language">Select Language:</label><br>
+                <select id="language" style="width: 100%; margin: 10px 0;">
+                    <option value="en">English</option>
+                    <option value="de">Deutsch</option>
+                </select><br>
+            </div>
+
+            <!-- Eingabefeld für den Sicherheitscode -->
+            <div class="section">
+                <label for="security-code">Enter Security Code:</label><br>
+                <input type="password" id="security-code" placeholder="Enter security code..." style="width: 100%; margin: 10px 0;"><br>
+            </div>
+
+            <!-- Relationship to Recipient (Dropdown mit Emojis) -->
             <div class="section">
                 <label for="relationship">Relationship to Recipient:</label><br>
                 <select id="relationship" style="width: 100%; margin: 10px 0;">
-                    <option value="casual">Casual 👥 (longtime friends)</option>
-                    <option value="professional">Professional 💼 (colleagues)</option>
-                    <option value="cynical">Cynical 😏 (sarcastic tone)</option>
-                    <option value="assertive">Assertive 🚀 (very direct, e.g. underperforming employees)</option>
-                    <option value="respective">Respective 🙏 (e.g. customer relationship)</option>
-                </select>
+                    <option value="friend">😊 Friendly</option>
+                    <option value="assertive">💪 Assertive</option>
+                    <option value="formal">📜 Formal</option>
+                </select><br>
             </div>
 
-            <!-- Length of Email -->
+            <!-- Length of Email (Slider) -->
             <div class="section">
                 <label for="length">Length of Email:</label><br>
-                <input type="range" id="length" min="1" max="5" value="3" class="slider">
-                <div id="length-value">Medium length (3)</div>
+                <input type="range" id="length" name="length" min="1" max="5" value="3" class="slider">
+                <span id="length-value">Medium</span><br>
             </div>
 
-            <!-- Context -->
+            <!-- Additional Context -->
             <div class="section">
                 <label for="context">Additional Context (optional):</label><br>
                 <textarea id="context" placeholder="Provide any additional context to help formulate the email..." style="width: 100%; height: 100px;"></textarea><br>
@@ -77,64 +109,5 @@
     <button id="download-eml">Download as Outlook (.eml)</button>
 
     <script src="script.js"></script> <!-- Verweis auf JavaScript-Datei -->
-
-    <script>
-        // JavaScript für das Ein-/Ausklappen der optionalen Felder
-        document.getElementById('toggle-optional-fields').addEventListener('click', () => {
-            const optionalFieldsSection = document.getElementById('optional-fields');
-            const toggleButton = document.getElementById('toggle-optional-fields');
-            if (optionalFieldsSection.style.display === 'none' || optionalFieldsSection.style.display === '') {
-                optionalFieldsSection.style.display = 'block';
-                toggleButton.textContent = 'Hide optional fields';
-            } else {
-                optionalFieldsSection.style.display = 'none';
-                toggleButton.textContent = 'Show optional fields';
-            }
-        });
-
-        // Update slider value display
-        const lengthSlider = document.getElementById('length');
-        const lengthValue = document.getElementById('length-value');
-        lengthSlider.addEventListener('input', function() {
-            lengthValue.textContent = ["Very Short", "Short", "Medium", "Long", "Very Long"][this.value - 1] + " (" + this.value + ")";
-        });
-
-        // Event handler for generating email
-        document.getElementById('generate-email').addEventListener('click', async () => {
-            const topic = document.getElementById('email-topic').value;
-            const securityCode = document.getElementById('security-code').value;
-            const recipient = document.getElementById('recipient').value;
-            const sender = document.getElementById('sender').value;
-            const language = document.getElementById('language').value;
-            const relationship = document.getElementById('relationship').value;
-            const length = lengthSlider.value;
-            const context = document.getElementById('context').value;
-
-            if (!topic || !recipient || !sender || !securityCode) {
-                alert("Please fill in all required fields.");
-                return;
-            }
-
-            try {
-                const response = await fetch('https://your-server-url/generate-email', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ topic, securityCode, recipient, sender, language, relationship, length, context })
-                });
-
-                if (response.ok) {
-                    const data = await response.json();
-                    const emailContent = data.email;
-
-                    document.getElementById('generated-email').value = emailContent;
-                } else {
-                    alert('Error generating email');
-                }
-            } catch (err) {
-                console.error('Error:', err);
-                alert('An unexpected error occurred.');
-            }
-        });
-    </script>
 </body>
 </html>

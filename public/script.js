@@ -8,7 +8,7 @@ document.getElementById('generate-email').addEventListener('click', async () => 
     // Optional Fields
     const relationship = document.getElementById('relationship').value;  // Dropdown für Beziehung
     const length = document.getElementById('length').value;  // Slider für Länge (Range-Input)
-    const context = document.getElementById('context').value;
+    const context = document.getElementById('context').value; // Optionales Kontextfeld
 
     // Validate required fields
     if (!topic || !recipient || !sender || !securityCode) {
@@ -30,29 +30,29 @@ document.getElementById('generate-email').addEventListener('click', async () => 
 
     try {
         // Send the POST request with the data
-        const response = await fetch('https://ulifrankschneider-github-io.onrender.com/generate-email', {
+        const response = await fetch('https://yourserver.com/generate-email', { // Ersetze dies mit deinem Server-Endpunkt
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(requestBody) // Pass all the data, including optional fields
+            body: JSON.stringify(requestBody) // Alle Daten, einschließlich der optionalen Felder, werden gesendet
         });
 
         if (response.ok) {
             const data = await response.json();
             const emailContent = data.email;
 
-            // Show the generated email in the textarea
+            // Zeige die generierte E-Mail im Textbereich an
             document.getElementById('generated-email').value = emailContent;
 
-            // Add functionality to download as .eml file
+            // Funktionalität für den Download der E-Mail im .eml-Format hinzufügen
             document.getElementById('download-eml').addEventListener('click', () => {
                 const emlContent = data.emlContent;
 
-                // Create a Blob and trigger download
+                // Blob erstellen und den Download auslösen
                 const blob = new Blob([emlContent], { type: 'message/rfc822' });
                 const link = document.createElement('a');
                 link.href = URL.createObjectURL(blob);
-                link.download = 'generated-email.eml'; // Save as .eml file
-                link.click(); // Trigger the download
+                link.download = 'generated-email.eml'; // Speichern als .eml-Datei
+                link.click(); // Download auslösen
             });
 
         } else {
@@ -65,6 +65,7 @@ document.getElementById('generate-email').addEventListener('click', async () => 
     }
 });
 
+// Event listener für den Senden-Button (E-Mail über "mailto" öffnen)
 document.getElementById('send-email').addEventListener('click', () => {
     const emailContent = document.getElementById('generated-email').value;
     const recipient = document.getElementById('recipient').value;
@@ -76,4 +77,14 @@ document.getElementById('send-email').addEventListener('click', () => {
 
     const mailtoLink = `mailto:${encodeURIComponent(recipient)}?subject=Generated Email&body=${encodeURIComponent(emailContent)}`;
     window.location.href = mailtoLink;
+});
+
+// Slider: Update the length display when the slider value changes
+document.getElementById('length').addEventListener('input', function() {
+    const lengthValue = document.getElementById('length').value;
+    const lengthText = lengthValue === "1" ? "Very Brief" :
+                       lengthValue === "2" ? "Brief" :
+                       lengthValue === "3" ? "Medium" :
+                       lengthValue === "4" ? "Detailed" : "Very Detailed";
+    document.getElementById('length-value').textContent = lengthText;
 });

@@ -9,9 +9,11 @@ const app = express();
 app.use(bodyParser.json());
 app.use(cors());
 
+// Load the OpenAI API key and the expected security code from environment variables
 const openaiApiKey = process.env.OPENAI_API_KEY;
 const expectedCode = process.env.SECURITY_CODE || "X!911";
 
+// Ensure the OpenAI API key is available
 if (!openaiApiKey) {
     console.error('Missing OpenAI API key in environment variables');
     process.exit(1);
@@ -19,13 +21,15 @@ if (!openaiApiKey) {
 
 const PORT = process.env.PORT || 3000;
 
+// Serve static files from the 'public' folder (optional, if you need static assets)
 app.use(express.static(path.join(__dirname, 'public')));
 
+// Define the endpoint for generating the email
 app.post('/generate-email', async (req, res) => {
     console.log('Incoming request body:', req.body);
     const { topic, securityCode, recipient, sender, language, relationship, length, context } = req.body;
 
-    // Check security code
+    // Check if the security code is valid
     if (securityCode !== expectedCode) {
         return res.status(403).json({ error: 'Invalid or missing security code' });
     }
@@ -38,7 +42,7 @@ app.post('/generate-email', async (req, res) => {
     // Define the greeting depending on the language
     const greeting = language === 'de' ? 'Viele Grüße' : 'Best regards';
 
-    // Define the prompt based on the optional fields
+    // Define the prompt for OpenAI based on the optional fields
     let userPrompt = language === 'de'
         ? `Schreibe eine professionelle E-Mail über: ${topic}. Die E-Mail soll an ${recipient} gehen und von ${sender} gesendet werden. Vermeide übliche Begrüßungsformeln wie "Ich hoffe, diese E-Mail erreicht Sie wohl".`
         : `Write a professional email about: ${topic}. The email should be addressed to ${recipient} and sent by ${sender}. Avoid using typical opening phrases like "I hope this email finds you well".`;
@@ -57,6 +61,7 @@ app.post('/generate-email', async (req, res) => {
     userPrompt += ` Conclude the email with '${greeting}' and the sender's name.`;
 
     try {
+        // Send the prompt to OpenAI for generating the email content
         const response = await axios.post('https://api.openai.com/v1/chat/completions', {
             model: 'gpt-3.5-turbo',
             messages: [
@@ -76,17 +81,17 @@ app.post('/generate-email', async (req, res) => {
             throw new Error('Failed to extract email from OpenAI response');
         }
 
-        // Remove typical greeting at the end if the AI included one
+        // Clean up the email by removing the greeting at the end if AI included one
         const cleanEmail = emailContent.replace(/(Best regards|Viele Grüße)[^]*$/, '').trim();
 
         // Add the correct greeting at the end of the email
         const finalEmail = `${cleanEmail}\n\n${greeting},\n${sender}`;
 
-        // Create the email in .eml format
+        // Create the email content in .eml format
         const subject = `Subject: ${topic}`;
         const emlContent = `From: ${sender}\r\nTo: ${recipient}\r\nSubject: ${subject}\r\nContent-Type: text/plain; charset="UTF-8"\r\n\r\n${finalEmail}\r\n\r\n${greeting},\r\n${sender}`;
 
-        // Return the email content and .eml format
+        // Return the email content (plain text) and the .eml formatted content
         res.json({ email: finalEmail, emlContent: emlContent });
 
     } catch (error) {
@@ -98,4 +103,5 @@ app.post('/generate-email', async (req, res) => {
     }
 });
 
+// Start the server
 app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
