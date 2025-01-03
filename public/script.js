@@ -11,15 +11,15 @@ document.getElementById('toggle-optional-fields').addEventListener('click', () =
 
 document.getElementById('generate-email').addEventListener('click', async () => {
     const topic = document.getElementById('email-topic').value;
-    const securityCode = document.getElementById('security-code').value; // Sicherheitscode vom Benutzer
-    const recipient = document.getElementById('recipient').value || 'recipient@example.com'; // Adressat mit Default-Wert
-    const sender = document.getElementById('sender').value || 'anonymous@example.com'; // Absender mit Default-Wert
-    const recipientName = document.getElementById('recipient-name').value || 'Recipient'; // Empfängername mit Default-Wert
-    const language = document.getElementById('language').value || 'en'; // Sprache (en/de)
-
+    const securityCode = document.getElementById('security-code').value;
+    const recipient = document.getElementById('recipient').value || 'recipient@example.com';
+    const sender = document.getElementById('sender').value || 'anonymous@example.com';
+    const language = document.getElementById('language').value || 'en';
+    const recipientName = document.getElementById('recipient-name').value || 'Recipient';
+    
     // Optional Fields
-    const relationship = document.getElementById('relationship').value || ''; // Dropdown für Beziehung
-    const length = document.getElementById('length').value || '3'; // Slider für Länge (Range-Input)
+    const relationship = document.getElementById('relationship').value || '';
+    const length = document.getElementById('length').value || '3';
     const context = document.getElementById('context').value || '';
 
     // Validate required fields (Including security code)
@@ -51,17 +51,26 @@ document.getElementById('generate-email').addEventListener('click', async () => 
 
         if (response.ok) {
             const data = await response.json();
-            const emailContent = data.email;
+            console.log('Server response:', data);
 
             // Show the generated email in the textarea
-            document.getElementById('generated-email').value = emailContent;
+            document.getElementById('generated-email').value = data.email;
 
             // Add functionality to download as .eml file
             document.getElementById('download-eml').addEventListener('click', () => {
-                const emlContent = data.emlContent || `
+                const emailContent = document.getElementById('generated-email').value;
+                if (!emailContent) {
+                    alert('Please generate an email first.');
+                    return;
+                }
+
+                const sender = document.getElementById('sender').value || 'anonymous@example.com';
+                const recipient = document.getElementById('recipient').value || 'recipient@example.com';
+
+                const emlContent = `
                     Subject: Generated Email
                     From: ${sender}
-                    To: ${recipientName} <${recipient}>
+                    To: ${recipient}
                     
                     ${emailContent}
                 `;
@@ -71,7 +80,7 @@ document.getElementById('generate-email').addEventListener('click', async () => 
                 const link = document.createElement('a');
                 link.href = URL.createObjectURL(blob);
                 link.download = 'generated-email.eml'; // Save as .eml file
-                link.click(); // Trigger the download
+                link.click();
             });
 
         } else {
