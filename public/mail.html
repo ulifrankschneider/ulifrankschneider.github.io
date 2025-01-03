@@ -119,7 +119,7 @@
 
         // Ensure mandatory fields are filled before sending or generating email
         document.getElementById('generate-email').addEventListener('click', () => {
-            const requiredFields = ['email-topic', 'sender', 'recipient-name', 'security-code'];
+            const requiredFields = ['email-topic', 'security-code'];
             for (const id of requiredFields) {
                 const field = document.getElementById(id);
                 if (!field.value) {
