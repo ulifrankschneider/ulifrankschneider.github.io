@@ -25,7 +25,7 @@ const PORT = process.env.PORT || 3000;
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Define the endpoint for generating the email
-app.post('/generate-email', async (req, res) => {
+app.post('https://ulifrankschneider-github-io.onrender.com/generate-email', async (req, res) => {
     console.log('Incoming request body:', req.body);
     const { topic, securityCode, recipient, sender, language, relationship, length, context } = req.body;
 
