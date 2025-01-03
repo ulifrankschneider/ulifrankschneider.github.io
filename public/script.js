@@ -12,17 +12,18 @@ document.getElementById('toggle-optional-fields').addEventListener('click', () =
 document.getElementById('generate-email').addEventListener('click', async () => {
     const topic = document.getElementById('email-topic').value;
     const securityCode = document.getElementById('security-code').value; // Sicherheitscode vom Benutzer
-    const recipient = document.getElementById('recipient').value; // Adressat
-    const sender = document.getElementById('sender').value; // Absender
-    const language = document.getElementById('language').value; // Sprache (en/de)
+    const recipient = document.getElementById('recipient').value || 'recipient@example.com'; // Adressat mit Default-Wert
+    const sender = document.getElementById('sender').value || 'anonymous@example.com'; // Absender mit Default-Wert
+    const recipientName = document.getElementById('recipient-name').value || 'Recipient'; // Empfängername mit Default-Wert
+    const language = document.getElementById('language').value || 'en'; // Sprache (en/de)
 
     // Optional Fields
-    const relationship = document.getElementById('relationship').value;  // Dropdown für Beziehung
-    const length = document.getElementById('length').value;  // Slider für Länge (Range-Input)
-    const context = document.getElementById('context').value;
+    const relationship = document.getElementById('relationship').value || ''; // Dropdown für Beziehung
+    const length = document.getElementById('length').value || '3'; // Slider für Länge (Range-Input)
+    const context = document.getElementById('context').value || '';
 
     // Validate required fields (Including security code)
-    if (!topic || !recipient || !sender || !language || !securityCode) {
+    if (!topic || !securityCode) {
         alert("Please fill in all required fields including the security code.");
         return;
     }
@@ -33,6 +34,7 @@ document.getElementById('generate-email').addEventListener('click', async () => 
         securityCode,
         recipient,
         sender,
+        recipientName,
         language,
         relationship,  // Optional field (from dropdown)
         length,        // Optional field (from slider)
@@ -56,7 +58,13 @@ document.getElementById('generate-email').addEventListener('click', async () => 
 
             // Add functionality to download as .eml file
             document.getElementById('download-eml').addEventListener('click', () => {
-                const emlContent = data.emlContent;
+                const emlContent = data.emlContent || `
+                    Subject: Generated Email
+                    From: ${sender}
+                    To: ${recipientName} <${recipient}>
+                    
+                    ${emailContent}
+                `;
 
                 // Create a Blob and trigger download
                 const blob = new Blob([emlContent], { type: 'message/rfc822' });
@@ -78,10 +86,10 @@ document.getElementById('generate-email').addEventListener('click', async () => 
 
 document.getElementById('send-email').addEventListener('click', () => {
     const emailContent = document.getElementById('generated-email').value;
-    const recipient = document.getElementById('recipient').value;
+    const recipient = document.getElementById('recipient').value || 'recipient@example.com'; // Default-Wert für Empfänger
 
-    if (!emailContent || !recipient) {
-        alert("Please generate the email and ensure a recipient is specified.");
+    if (!emailContent) {
+        alert("Please generate the email first.");
         return;
     }
 

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Email Generator</title>
-    <link rel="stylesheet" href="styles.css"> <!-- Verweis auf CSS-Datei -->
+    <link rel="stylesheet" href="styles.css">
     <style>
         .section {
             margin-bottom: 15px;
@@ -41,33 +41,33 @@
     </nav>
     <h1>Email Generator</h1>
 
-    <!-- Eingabefeld für das Thema (Pflichtfeld) -->
-    <label for="email-topic">What is the email about?</label><br>
-    <input type="text" id="email-topic" placeholder="Enter topic here..." style="width: 100%; margin: 10px 0;"><br>
-
-    <!-- Eingabefeld für den Sicherheitscode (Mandatory Field) -->
+    <!-- Eingabefelder für Pflichtangaben -->
+    <div class="section">
+        <label for="email-topic">What is the email about?</label><br>
+        <input type="text" id="email-topic" placeholder="Enter topic here..." style="width: 100%; margin: 10px 0;" required><br>
+    </div>
+    <div class="section">
+        <label for="sender">Sender (From):</label><br>
+        <input type="text" id="sender" placeholder="Enter sender's email..." style="width: 100%; margin: 10px 0;" required><br>
+    </div>
+    <div class="section">
+        <label for="recipient-name">Recipient (Name):</label><br>
+        <input type="text" id="recipient-name" placeholder="Enter recipient's name..." style="width: 100%; margin: 10px 0;" required><br>
+    </div>
     <div class="section">
         <label for="security-code">Enter Security Code:</label><br>
         <input type="password" id="security-code" placeholder="Enter security code..." style="width: 100%; margin: 10px 0;" required><br>
     </div>
 
-    <!-- Section: Optional Fields (Dropdowns, etc.) -->
+    <!-- Optionale Felder -->
     <div class="section">
         <div class="toggle-button" id="toggle-optional-fields">Show optional fields</div>
         <div id="optional-fields" class="hidden-section">
-            <!-- Eingabefeld für den Adressaten (optional) -->
             <div class="section">
-                <label for="recipient">Recipient (Name):</label><br>
-                <input type="text" id="recipient" placeholder="Enter recipient's name..." style="width: 100%; margin: 10px 0;"><br>
+                <label for="email-recipient">Recipient Email (Optional):</label><br>
+                <input type="email" id="email-recipient" placeholder="Enter recipient's email address..." style="width: 100%; margin: 10px 0;"><br>
             </div>
 
-            <!-- Eingabefeld für den Absender (optional) -->
-            <div class="section">
-                <label for="sender">Sender (From):</label><br>
-                <input type="text" id="sender" placeholder="Enter sender's email..." style="width: 100%; margin: 10px 0;"><br>
-            </div>
-
-            <!-- Dropdown für die Sprache (optional) -->
             <div class="section">
                 <label for="language">Select Language:</label><br>
                 <select id="language" style="width: 100%; margin: 10px 0;">
@@ -76,7 +76,6 @@
                 </select><br>
             </div>
 
-            <!-- Relationship to Recipient (Dropdown mit Emojis) -->
             <div class="section">
                 <label for="relationship">Relationship to Recipient:</label><br>
                 <select id="relationship" style="width: 100%; margin: 10px 0;">
@@ -86,14 +85,12 @@
                 </select><br>
             </div>
 
-            <!-- Length of Email (Slider) -->
             <div class="section">
                 <label for="length">Length of Email:</label><br>
                 <input type="range" id="length" name="length" min="1" max="5" value="3" class="slider">
                 <span id="length-value">Medium</span><br>
             </div>
 
-            <!-- Additional Context -->
             <div class="section">
                 <label for="context">Additional Context (optional):</label><br>
                 <textarea id="context" placeholder="Provide any additional context to help formulate the email..." style="width: 100%; height: 100px;"></textarea><br>
@@ -108,6 +105,58 @@
     <button id="send-email">Send with Outlook</button>
     <button id="download-eml">Download as Outlook (.eml)</button>
 
-    <script src="script.js"></script> <!-- Verweis auf JavaScript-Datei -->
+    <script>
+        document.getElementById('toggle-optional-fields').addEventListener('click', () => {
+            const optionalFields = document.getElementById('optional-fields');
+            optionalFields.style.display = optionalFields.style.display === 'none' || !optionalFields.style.display ? 'block' : 'none';
+        });
+
+        // Update length slider text
+        document.getElementById('length').addEventListener('input', (e) => {
+            const lengthText = ['Very Short', 'Short', 'Medium', 'Long', 'Very Long'];
+            document.getElementById('length-value').textContent = lengthText[e.target.value - 1];
+        });
+
+        // Ensure mandatory fields are filled before sending or generating email
+        document.getElementById('generate-email').addEventListener('click', () => {
+            const requiredFields = ['email-topic', 'sender', 'recipient-name', 'security-code'];
+            for (const id of requiredFields) {
+                const field = document.getElementById(id);
+                if (!field.value) {
+                    alert(`Please fill in the required field: ${field.previousElementSibling.textContent}`);
+                    return;
+                }
+            }
+            // Call your generate email function here
+        });
+
+        document.getElementById('send-email').addEventListener('click', () => {
+            const emailContent = document.getElementById('generated-email').value;
+            const emailRecipient = document.getElementById('email-recipient').value;
+
+            if (!emailContent) {
+                alert("Please generate the email first.");
+                return;
+            }
+
+            const mailtoLink = `mailto:${encodeURIComponent(emailRecipient)}?subject=Generated Email&body=${encodeURIComponent(emailContent)}`;
+            window.location.href = mailtoLink;
+        });
+
+        document.getElementById('download-eml').addEventListener('click', () => {
+            const emailContent = document.getElementById('generated-email').value;
+            if (!emailContent) {
+                alert("Please generate the email first.");
+                return;
+            }
+
+            const emlContent = `Subject: Generated Email\nFrom: sender@example.com\nTo: recipient@example.com\n\n${emailContent}`;
+            const blob = new Blob([emlContent], { type: 'message/rfc822' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'generated-email.eml';
+            link.click();
+        });
+    </script>
 </body>
 </html>

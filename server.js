@@ -35,17 +35,19 @@ app.post('/generate-email', async (req, res) => {
     }
 
     // Validate required fields
-    if (!topic || !recipient || !sender || !language) {
-        return res.status(400).json({ error: 'All fields (topic, recipient, sender, language) are required.' });
+    if (!topic || !language) {
+        return res.status(400).json({ error: 'Fields "topic" and "language" are required.' });
     }
 
-    // Define the greeting depending on the language
+    // Set default values for optional fields
+    const senderValue = sender || 'anonymous@example.com'; // Default sender
+    const recipientValue = recipient || 'recipient@example.com'; // Default recipient
     const greeting = language === 'de' ? 'Viele Grüße' : 'Best regards';
 
     // Define the prompt for OpenAI based on the optional fields
     let userPrompt = language === 'de'
-        ? `Schreibe eine professionelle E-Mail über: ${topic}. Die E-Mail soll an ${recipient} gehen und von ${sender} gesendet werden. Vermeide übliche Begrüßungsformeln wie "Ich hoffe, diese E-Mail erreicht Sie wohl".`
-        : `Write a professional email about: ${topic}. The email should be addressed to ${recipient} and sent by ${sender}. Avoid using typical opening phrases like "I hope this email finds you well".`;
+        ? `Schreibe eine professionelle E-Mail über: ${topic}. Die E-Mail soll an ${recipientValue} gehen und von ${senderValue} gesendet werden. Vermeide übliche Begrüßungsformeln wie "Ich hoffe, diese E-Mail erreicht Sie wohl".`
+        : `Write a professional email about: ${topic}. The email should be addressed to ${recipientValue} and sent by ${senderValue}. Avoid using typical opening phrases like "I hope this email finds you well".`;
 
     // Optionally include relationship, length, and context in the prompt
     if (relationship) {
@@ -85,11 +87,11 @@ app.post('/generate-email', async (req, res) => {
         const cleanEmail = emailContent.replace(/(Best regards|Viele Grüße)[^]*$/, '').trim();
 
         // Add the correct greeting at the end of the email
-        const finalEmail = `${cleanEmail}\n\n${greeting},\n${sender}`;
+        const finalEmail = `${cleanEmail}\n\n${greeting},\n${senderValue}`;
 
         // Create the email content in .eml format
         const subject = `Subject: ${topic}`;
-        const emlContent = `From: ${sender}\r\nTo: ${recipient}\r\nSubject: ${subject}\r\nContent-Type: text/plain; charset="UTF-8"\r\n\r\n${finalEmail}\r\n\r\n${greeting},\r\n${sender}`;
+        const emlContent = `From: ${senderValue}\r\nTo: ${recipientValue}\r\nSubject: ${subject}\r\nContent-Type: text/plain; charset="UTF-8"\r\n\r\n${finalEmail}\r\n\r\n${greeting},\r\n${senderValue}`;
 
         // Return the email content (plain text) and the .eml formatted content
         res.json({ email: finalEmail, emlContent: emlContent });
